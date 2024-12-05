@@ -1,7 +1,7 @@
 <template>
   <div v-if="showMessage" class="task-overview">
     <div class="task-count">
-      <i class="fa-solid fa-bell bell-icon"></i>
+      <i :class="['fa-solid', 'fa-bell', 'bell-icon', { ringing: isRinging }]" ></i>
       <span v-if="taskCount === 0">Vous n'avez aucune tâche aujourd'hui</span>
       <span v-else>Vous avez {{ taskCount }} tâche(s) Aujourd'hui!</span>
     </div>
@@ -18,12 +18,12 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      taskCount: 0, // Variable to hold the count of tasks due today
-      showMessage: true, // Controls the visibility of the message
+      taskCount: 0,
+      showMessage: true,
+      isRinging: false // Contrôle de l'animation
     };
   },
   created() {
-    // Fetch the task count due today when the component is created
     axios.get('http://localhost:3000/api/tasks/today')
       .then(response => {
         this.taskCount = response.data.taskCount;
@@ -32,10 +32,16 @@ export default {
         console.error('Error fetching task count:', error);
       });
   },
+  mounted() {
+    this.isRinging = true;
+    setTimeout(() => {
+      this.isRinging = false;
+    }, 5000); // Arrêter l'animation après 5 secondes
+  },
   methods: {
     hideMessage() {
-      this.showMessage = false; // Hides the message
-    },
+      this.showMessage = false;
+    }
   },
 };
 </script>
@@ -48,48 +54,69 @@ export default {
   border-radius: 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Space between the task count and the close button */
+  justify-content: space-between;
   margin: 20px 150px 50px 300px;
   transition: transform 0.4s ease;
+}
+
+/* Style en mode sombre */
+.dark-mode .task-overview {
+  background-color: rgb(55, 54, 56);
+  color: rgba(209, 209, 209, 0.858);
+}
+
+.dark-mode .bell-icon {
+  color: hsl(268, 75%, 67%);
 }
 
 .task-count {
   font-size: 1.2rem;
   font-weight: bold;
+  display: flex;
+  align-items: center;
 }
 
 .bell-icon {
   margin-right: 0.8rem;
-  font-size: 1.5rem;
-  transition: transform 0.2s ease;
-}
-
-.bell-icon:hover {
-  color: hsl(268, 70%, 60%);
-  transform: translateY(-3px) scale(1.05);
-}
-
-.task-overview .close-btn {
-  border: none;
-  color: #491784 !important; /* Force the color to override */
   font-size: 1.8rem;
-  font-weight: bold;
-  background: none; /* Ensure no background is interfering */
   cursor: pointer;
-  margin: 0;
+  color: hsl(268, 75%, 67%);
+  transition: transform 0.1s ease-in-out;
+}
+
+/* Animation cloche qui "sonne" */
+.ringing {
+  animation: ring 0.5s ease-in-out infinite;
+}
+
+@keyframes ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
+  100% {
+    transform: rotate(0deg);
+}
+}
+.close-btn {
+  border: none;
+  color: #a198ac;
+  font-size: 1.8rem;
+  background: none;
+  cursor: pointer;
   transition: transform 0.2s ease;
 }
 
-.task-overview .close-btn:hover {
+.close-btn:hover {
   transform: translateY(-3px) scale(1.05);
   color: #491784;
-}
-
-/* Center task-overview for medium screens and below */
-@media screen and (max-width: 768px) {
-  .task-overview {
-    margin: 20px 50px 50px 120px;
-    display: flex;
-  }
 }
 </style>

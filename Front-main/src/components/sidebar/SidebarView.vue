@@ -51,7 +51,17 @@ import SidebarLink from './SidebarLink';
 
 export default {
   components: { SidebarLink },
+  data() {
+    return {
+      isDarkMode: false, // Track dark mode status
+    };
+  },
   methods: {
+    toggleDarkMode() {
+      this.isDarkMode = !this.isDarkMode;
+      // Optionally, save the dark mode state to localStorage or a cookie
+      localStorage.setItem('darkMode', this.isDarkMode);
+    },
     goToAddView() {
       this.$router.push('/add'); // Naviguer vers la page "Ajouter Tâche"
     },
@@ -95,8 +105,54 @@ export default {
 
 
 <style scoped>
+/* Default Light Mode */
+.sidebar {
+  background-color: #e4c1f9;
+  color: #491784;
+}
 
+.dark-mode .sidebar {
+  background-color:rgb(55, 54, 56);/* Dark background */
+  color: #fff; /* Light text */
+}
 
+.sidebar .sidebar-button {
+  background-color: #cb6ce6;
+  color: #fff;
+}
+.dark-mode .ajout{
+  background-color:hsl(268, 75%, 67%);
+  
+}
+.dark-mode .ajout:hover{
+  background-color:hsl(268, 35%, 48%);
+}
+.sidebar.dark .sidebar-button {
+  background-color: #555; /* Dark button */
+}
+
+.sidebar .logout {
+  background-color: #ff6f6f;
+}
+
+.dark-mode .logout {
+  background-color: #dc5757; /* Dark logout button */
+}
+.dark-mode .logout:hover{
+  background-color: #9f3c3c;
+}
+
+.sidebar .collapse-icon {
+  color: #9755e1;
+}
+
+.sidebar.dark .collapse-icon {
+  color: #9c9a9a; /* Light icon in dark mode */
+}
+
+.dark-mode .logo-link{
+  color: #948dbc;
+}
 .sidebar {
   all: unset;
   width: var(--sidebar-width);

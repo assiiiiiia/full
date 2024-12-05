@@ -6,7 +6,7 @@
     
     <!-- Pass taskCount to TaskOverview -->
     <div class="overview">
-        <p class="text-muted fs-4 fw-bold">Aperçu</p>
+        <p class=" fs-4 fw-bold">Aperçu :</p>
     </div>
 
      
@@ -65,5 +65,8 @@ export default {
 <style>
 .overview{
     margin-left: 270px;
+}
+.dark-mode p{
+    color: rgba(209, 209, 209, 0.858);
 }
 </style>

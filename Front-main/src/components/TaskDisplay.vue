@@ -115,12 +115,6 @@ export default {
 };
 </script>
 
-
-
-
-
-
-
 <style scoped>
 .task-display {
   border: 1px solid #ddd;
@@ -132,12 +126,19 @@ export default {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.dark-mode .task-display{
+  color: rgba(209, 209, 209, 0.858);
+  background-color: #a5a5a56a;
+  border: none;
+}
+
 .task-display:hover {
   transform: translateY(-3px);
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* Custom Checkbox */
+
 .custom-checkbox {
   position: relative;
   display: inline-block;
@@ -151,7 +152,10 @@ export default {
   opacity: 0;
   cursor: pointer;
 }
-
+.dark-mode .custom-checkbox .checkmark{
+  background-color: #4646469e;
+  border: 2px solid #353535c6;
+}
 .custom-checkbox .checkmark {
   position: absolute;
   top: 0;
@@ -170,7 +174,11 @@ export default {
   border-color: #491784;
   transform: scale(0.9);
 }
-
+.dark-mode .custom-checkbox input:checked ~ .checkmark {
+  background-color: #9760d5;
+  border-color: #a472de;
+  transform: scale(0.9);
+}
 /* Improved Checkmark */
 .custom-checkbox .checkmark:after {
   content: '';
@@ -199,7 +207,9 @@ export default {
   color: #491784;
   cursor: pointer;
 }
-
+.dark-mode .task-options {
+  color: rgba(209, 209, 209, 0.858);
+}
 /* Dropdown Menu */
 .dropdown {
   position: relative;

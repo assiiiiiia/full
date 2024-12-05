@@ -40,16 +40,15 @@ export default {
   },
   data() {
     return {
-      showEditPopup: false, // Controls visibility of the edit popup
-      taskToEdit: null, // Stores the task being edited
-      tasks: [],  // Empty array that will be filled with data from the backend
+      showEditPopup: false,
+      taskToEdit: null,
+      tasks: [],
     };
   },
   mounted() {
-    // Fetch tasks from the backend
     axios.get('http://localhost:3000/api/tasks')
       .then(response => {
-        this.tasks = response.data;  // Fill the tasks array with the fetched data
+        this.tasks = response.data;
       })
       .catch(error => {
         console.error('Error fetching tasks:', error);
@@ -65,24 +64,21 @@ export default {
   },
   methods: {
     goToAddTask() {
-      this.$router.push('/add'); // Navigate to the AddTask component
+      this.$router.push('/add');
     },
     openEditPopup(task) {
-      this.taskToEdit = task; // Set the selected task
-      this.showEditPopup = true; // Show the popup
+      this.taskToEdit = task;
+      this.showEditPopup = true;
     },
     closeEditPopup() {
-      this.showEditPopup = false; // Hide the popup
-      this.taskToEdit = null; // Clear the selected task
+      this.showEditPopup = false;
+      this.taskToEdit = null;
     },
     updateTaskStatus(updatedTask) {
-      // Find and update the task in the local tasks array
       const index = this.tasks.findIndex((t) => t.id === updatedTask.id);
       if (index !== -1) {
-        this.tasks.splice(index, 1, updatedTask); // Replace the task with the updated one
+        this.tasks.splice(index, 1, updatedTask);
       }
-    
-      // Update the task in the database
       axios.put(`http://localhost:3000/api/tasks/${updatedTask.id}`, updatedTask)
         .then(() => {
           console.log("Task updated successfully");
@@ -91,27 +87,8 @@ export default {
           console.error("Error updating task:", error);
         });
     },
-    handleTaskUpdate(updatedTask) {
-    // Update the task status locally when the checkbox is clicked
-    const taskIndex = this.tasks.findIndex(task => task.id === updatedTask.id);
-    if (taskIndex !== -1) {
-      this.tasks[taskIndex] = updatedTask; // Replace the updated task in the local array
-    }
-
-    // Make an API call to update the task status in the database
-    axios.put(`http://localhost:3000/api/tasks/${updatedTask.id}`, updatedTask)
-      .then(() => {
-        console.log("Task updated successfully");
-      })
-      .catch((error) => {
-        console.error("Error updating task:", error);
-      });
-  },
     handleDeleteTask(task) {
-      // Remove the task from the current task list
       this.tasks = this.tasks.filter(t => t.id !== task.id);
-
-      // Optionally, you can make an API call to remove it from the database
       axios.delete(`http://localhost:3000/api/tasks/${task.id}`)
         .then(() => {
           console.log('Task deleted successfully');
@@ -124,11 +101,7 @@ export default {
 };
 </script>
 
-
-
-
 <style>
-/* Your styles here */
 .today-tasks-card {
   border: 1px solid #ddd;
   border-radius: 12px;
@@ -142,38 +115,76 @@ export default {
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
+.today-tasks-card::-webkit-scrollbar {
+  width: var(--w-scrollbar, 8px); /* Default width */
+  height: var(--w-scrollbar, 8px);
+  border-radius: 9999px;
+}
+
+.today-tasks-card::-webkit-scrollbar-track {
+  background: #0000;
+}
+
+.today-tasks-card::-webkit-scrollbar-thumb {
+  background: #0000;
+  border-radius: 9999px;
+}
+
+.today-tasks-card:hover::-webkit-scrollbar-thumb {
+  background: #c1c2c5;
+}
+
+.dark-mode .today-tasks-card:hover::-webkit-scrollbar-thumb {
+  background: #575656;
+}
+
+.dark-mode .today-tasks-card {
+  background-color: rgb(55, 54, 56);
+  box-shadow: 5px 18px 22px rgba(0, 0, 0, 0.324);
+  border: none;
+}
+
+.dark-mode .header {
+  color: hsl(268, 75%, 67%);
+}
+
+.dark-mode button.add {
+  background-color: hsl(268, 75%, 67%);
+}
+
 .header {
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   color: #491784;
   font-weight: bolder;
+  padding-bottom: 20px;
 }
 
 button.add {
   padding: 0.3rem;
-  width: 2rem; /* Makes it a perfect circle */
+  width: 2rem;
   height: 2rem;
   font-size: 1.5rem;
   font-weight: bold;
   background: #491784;
   color: #fff;
   border: none;
-  border-radius: 50%; /* Ensures it's perfectly round */
-  display: flex; /* Centers the "+" symbol */
+  border-radius: 50%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds subtle depth */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.3s ease;
 }
 
 button.add:hover {
-  background: hsl(268, 70%, 60%); /* Softer hover effect */
-  transform: scale(1.1); /* Subtle growth effect */
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+  background: hsl(268, 70%, 60%);
+  transform: scale(1.1);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 @media screen and (max-width: 768px) {
-  .today-tasks-card{
+  .today-tasks-card {
     margin-left: 15px;
   }
 }

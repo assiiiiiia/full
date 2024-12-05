@@ -44,6 +44,53 @@ router.get('/tasks', (req, res) => {
     res.json(results); 
   });
 });
+//route to update status
+router.put("/task/:id/status", (req, res) => {
+  const { status } = req.body; // Le statut envoyé depuis le frontend
+  const taskId = req.params.id;
+
+  if (!taskId) {
+    res.status(400).send('ID de la tâche requis.');
+    return; // Fin de la fonction
+  }
+
+  if (!['en cours', 'pas commencé', 'termine'].includes(status)) {
+    res.status(400).send('Statut invalide.');
+    return; // Fin de la fonction
+  }
+
+  const sql = `UPDATE tasks SET status = ? WHERE id = ?`;
+
+  db.query(sql, [status, taskId], (err) => {
+    if (err) {
+      res.status(500).send('Erreur lors de la mise à jour du statut de la tâche.');
+      return;
+    }
+    res.send('Statut de la tâche mis à jour avec succès !');
+  });
+});
+//route to update status
+router.put("/task/:id/status", (req, res) => {
+  const { status } = req.body;
+  const taskId = req.params.id;
+
+  if (!taskId) {
+    return res.status(400).send("ID de la tâche requis.");
+  }
+
+  if (!['pas commencé', 'en cours', 'terminé', 'annulé'].includes(status)) {
+    return res.status(400).send("Statut invalide.");
+  }
+
+  const sql = `UPDATE tasks SET status = ? WHERE id = ?`;
+
+  db.query(sql, [status, taskId], (err) => {
+    if (err) {
+      return res.status(500).send("Erreur lors de la mise à jour du statut de la tâche.");
+    }
+    res.send("Statut de la tâche mis à jour avec succès !");
+  });
+});
 
 //update a task
 router.put("/:id", (req, res) => {

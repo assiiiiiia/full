@@ -61,4 +61,7 @@ h3 {
   color: rgb(86, 40, 129);
   margin-bottom: 50px;
 }
+.dark-mode ,h3,.status-column{
+  color:hsl(268, 75%, 67%);
+}
 </style>

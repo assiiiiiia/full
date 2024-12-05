@@ -53,12 +53,22 @@ data() {
 
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap');
+
+
+
+
 html, body {
+  font-family: 'Montserrat', sans-serif;
   margin: 0;
   padding: 0;
   height: 100%;
+  font-family: 'Inter', sans-serif;
 }
-
+.dark-mode {
+  background-color:#212121 ;
+  color: #ffffff;
+}
 #app {
   display: flex;
   flex-direction: column;

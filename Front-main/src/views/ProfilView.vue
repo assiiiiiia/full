@@ -5,7 +5,7 @@
       <h2 class="heading">Mon Profil</h2>
 
       <div class="profile-photo-section">
-        <img :src="require('@/assets/user.jpg')" alt="Photo de profil" class="profile-photo" />
+        <img :src=" profilePhoto || require('@/assets/user.jpg')" alt="Photo de profil" class="profile-photo" />
         <input type="file" @change="onPhotoChange" class="input" />
         <button @click="uploadPhoto" class="login-button">Changer photo de profil</button>
       </div>
@@ -107,6 +107,7 @@ export default {
     this.profile.name = data.name || "Nom non défini";
     this.profile.surname = data.surname || "Prénom non défini";
     this.profile.email = data.email || "Email non défini";
+    
   } catch (error) {
     console.error("Erreur lors du chargement des données du profil :", error);
   }
@@ -211,6 +212,35 @@ async renderChart() {
 </script>
 
 <style scoped>
+
+
+.dark-mode .container,
+.dark-mode .container2 {
+  background-color:rgb(55, 54, 56);
+  color:rgba(209, 209, 209, 0.858) ;
+  box-shadow: 5px 18px 22px rgba(0, 0, 0, 0.324);
+  border:none;
+}
+
+.dark-mode .input {
+  background:rgb(108, 108, 108);
+  color:  rgba(209, 209, 209, 0.858) ;
+  box-shadow: 5px 18px 22px rgba(0, 0, 0, 0.324);
+}
+
+
+.dark-mode .circle {
+  background: conic-gradient(
+    #bb86fc calc(  rgba(209, 209, 209, 0.858) * 1%),
+    #444 0%
+  );
+}
+.dark-mode .heading{
+  color:hsl(268, 75%, 67%);
+}
+.form {
+ font-size: large;
+}
 .main-container {
   display: flex;
   flex-direction: row;

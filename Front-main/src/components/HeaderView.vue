@@ -14,9 +14,14 @@
       </button>
 
       <!-- Light/Dark Mode Toggle Icon (visible only on medium and larger screens) -->
-      <button class="icon-btn d-none d-md-block">
-        <i class="fas fa-moon"></i>
-      </button>
+      <div class="icon-btn ">
+              <i 
+                class="fas" 
+                :class="darkMode ? 'fa-sun' : 'fa-moon'" 
+                @click="toggleDarkMode"
+                style="cursor: pointer; font-size: 20px;"
+              ></i>
+            </div>
 
       <!-- Settings Icon (visible only on medium and larger screens) -->
       <button class="icon-btn d-none d-md-block me-5">
@@ -31,7 +36,7 @@
           class="profile-img"
         />
         <div class="profile-info">
-          <span class="profile-name">utilisateur</span>
+          <span class="profile-name"> {{ userName  }}</span>
         </div>
       </div>
     </div>
@@ -39,13 +44,70 @@
 </template>
 
 <script>
+  import axios from "axios"; 
 export default {
+
   name: "HeaderView",
+  data() {
+    return {
+      darkMode: false,
+      userName: "",
+       // Track dark mode state
+    };
+  },
+  created() {
+    // Check if dark mode is already set in localStorage
+    const savedMode = localStorage.getItem("darkMode");
+    if (savedMode === "true") {
+      this.darkMode = true;
+      document.body.classList.add("dark-mode");
+    }
+  },
+  methods: {
+    toggleDarkMode() {
+      this.darkMode = !this.darkMode;
+      if (this.darkMode) {
+        document.body.classList.add("dark-mode");
+        localStorage.setItem("darkMode", "true");
+      } else {
+        document.body.classList.remove("dark-mode");
+        localStorage.setItem("darkMode", "false");
+      }
+    },
+  },
+  // Import axios to make API requests
+
+
+
+ mounted() {
+  // Make an API call to fetch the user data from the backend when the component is mounted
+  axios.get("http://localhost:3000/api/user", { withCredentials: true })
+    .then(response => {
+      if (response.data.userName) {
+        this.userName = response.data.userName; // Assign the fetched name to userName
+      } else {
+        console.error('User not authenticated');
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching user data:", error);
+    });
+}
+
 };
+
 </script>
 
 <style scoped>
 /* Header Container */
+.dark-mode .search-bar{
+background-color: #3f3f3f;
+border-radius: 20px;
+}
+.dark-mode .search-input{
+  color: #c3c3c3;
+
+}
 .header {
   display: flex;
   justify-content: space-between; /* Space between search bar and other elements */
@@ -61,20 +123,20 @@ export default {
   position: relative; /* Remove absolute positioning */
   left: 20%; /* Remove unnecessary offset */
   width: 50%; /* Adjust width of the search bar container */
+  transition: 0.4s;
 }
 
 /* Search Input */
 .search-input {
-  width: 100%; /* Ensure it takes full width of the container */
-  padding: 0.3rem; /* Larger padding for better usability */
+  width: 100%;  
   border-radius: 5px;
   outline: none;
   padding: 10px;
+  padding-left: 50px;
   border: none;
   border-radius: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
 
 /* Icons and Profile Section */
 .icons-and-profile {
@@ -83,7 +145,12 @@ export default {
   gap: 1rem;
   margin-left: auto; /* Push to the right side */
 }
-
+.dark-mode .icon-btn {
+  color:  hsl(268, 75%, 67%);
+}
+.dark-mode .profile-name{
+  color:  hsl(268, 75%, 67%);
+}
 /* Icon Buttons */
 .icon-btn {
   background: none;
@@ -137,7 +204,14 @@ export default {
   right: 0;
   transition: .9s ease;
 }
-
+.dark-mode .search-bar button[type="submit"]{
+  color: rgb(255, 255, 255);
+  background-color: hsl(268, 75%, 67%);
+}
+.dark-mode .search-bar button[type="submit"]:hover{
+  color: rgb(255, 255, 255);
+  background-color: hsl(269, 75%, 44%);
+}
 .search-bar button[type="submit"]:hover {
   transform: scale(1.1);
   color: rgb(255, 255, 255);

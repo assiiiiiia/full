@@ -300,7 +300,7 @@ v-checkbox input {
 
 
 .dark-mode {
-  background-color: #ece7e7;
+  background-color:#212121 ;
   color: #ffffff;
 }
 

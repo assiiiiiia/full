@@ -87,4 +87,15 @@ export default {
   width: 25px;
   margin-right: 10px;
 }
+.dark-mode .link{
+  color:rgba(209, 209, 209, 0.858);
+  transition: 0.3s;
+}
+.dark-mode .link.active{
+  border-bottom: 2px solid hsl(268, 75%, 67%); /* A solid underline for emphasis */
+  
+}
+.dark-mode .link:hover{
+  color: hsl(268, 75%, 67%);
+}
 </style>

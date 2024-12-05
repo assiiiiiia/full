@@ -66,4 +66,8 @@ export default {
   box-shadow: 0px 4px 6px rgba(123, 122, 122, 0.963);
   transition: 0.5s;
 }
+.dark-mode .task-status-container{
+  background-color:rgb(55, 54, 56);
+  box-shadow: 5px 18px 22px rgba(0, 0, 0, 0.324);
+}
 </style>

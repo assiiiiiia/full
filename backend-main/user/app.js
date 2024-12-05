@@ -16,7 +16,7 @@ const port = 3000;
 // Middleware
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(cors({
-  origin: 'http://localhost:8081', // URL frontend
+  origin: 'http://localhost:8080', // URL frontend
   credentials: true,
 }));
 
@@ -32,7 +32,7 @@ app.use(session({
   },
 }));
 
-app.use('/api', tasksRouter);
+app.use('/api', tasksRouter); // Ajout du routeur pour les tâches
 
 // MySQL database connection
 const db = mysql.createConnection({
@@ -158,65 +158,81 @@ app.get('/logout', (req, res) => {
   });
 });
 
-// Route to handle task creation
-app.post('/tasks', (req, res) => {
-  const { task_name, category, due_date, due_time, priority } = req.body;
-  const status = 'pas commencé'; // Default status (must match ENUM in the database)
 
-  let dueDateTime = null;
-  if (due_date && due_time) {
-    dueDateTime = `${due_date} ${due_time}`;
-  } else if (due_date) {
-    dueDateTime = `${due_date} 00:00:00`; // Default time if not provided
+
+//Route pour changer les information de l'utilisateur
+app.put("/profile", (req, res) => {
+  const { name, surname, email, password } = req.body;
+  const userId = req.session.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Utilisateur non authentifié." });
   }
 
-  // Check if the due date is in the past
-  if (dueDateTime) {
-    const currentDate = new Date();
-    const dueDate = new Date(dueDateTime);
-    if (dueDate < currentDate) {
-      return res.status(400).json({ message: "La date d'échéance ne peut pas être dans le passé." });
+  const updates = [];
+  const values = [];
+
+  if (name) {
+    updates.push("name = ?");
+    values.push(name);
+  }
+  if (surname) {
+    updates.push("surname = ?");
+    values.push(surname);
+  }
+  if (email) {
+    updates.push("email = ?");
+    values.push(email);
+  }
+
+  function applyUpdates() {
+    if (updates.length === 0) {
+      return res.status(400).json({ message: "Aucune donnée à mettre à jour." });
     }
+
+    const sql = `UPDATE users SET ${updates.join(", ")} WHERE id = ?`;
+    values.push(userId);
+
+    db.query(sql, values, (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Erreur lors de la mise à jour du profil." });
+      }
+      res.json({ message: "Profil mis à jour avec succès !" });
+    });
   }
 
-  // Insert the new task into the database
-  const query = `INSERT INTO tasks (task_name, category, due_date, priority, status, created_at) VALUES (?, ?, ?, ?, ?, NOW())`;
-  const values = [task_name, category, dueDateTime, priority, status];
-
-  db.query(query, values, (err, result) => {
-    if (err) {
-      console.error("Error inserting task:", err);
-      return res.status(500).json({ message: "Erreur lors de l'insertion de la tâche." });
-    }
-    res.json({ message: "Tâche insérée avec succès !" });
-  });
-});
-
-// Update task status route
-app.put('/api/tasks/:id', (req, res) => {
-  const taskId = req.params.id;
-  const { status } = req.body; // Expecting the status from the request
-
-  // Ensure that the status is one of the valid statuses, e.g., 'pas commencé', 'en cours', 'terminé'
-  const validStatuses = ['pas commencé', 'en cours', 'terminé'];
-
-  if (!validStatuses.includes(status)) {
-    return res.status(400).json({ message: "Statut de la tâche invalide" });
+  if (password) {
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
+      if (err) {
+        return res.status(500).json({ message: "Erreur lors du hachage du mot de passe." });
+      }
+      updates.push("password = ?");
+      values.push(hashedPassword);
+      applyUpdates();
+    });
+  } else {
+    applyUpdates();
   }
-
-  const query = 'UPDATE tasks SET status = ? WHERE id = ?';
   
-  db.query(query, [status, taskId], (err, result) => {
+});
+// route pour avoir les information de l'utilisateur et les Afficher
+app.get("/profile", (req, res) => {
+  const userId = req.session.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Utilisateur non authentifié." });
+  }
+
+  const sql = "SELECT name, surname, email FROM users WHERE id = ?";
+  db.query(sql, [userId], (err, results) => {
     if (err) {
-      console.error('Error updating task status:', err);
-      return res.status(500).json({ message: "Erreur lors de la mise à jour du statut de la tâche" });
+      return res.status(500).json({ message: "Erreur lors de la récupération du profil." });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Profil non trouvé." });
     }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Tâche non trouvée" });
-    }
-
-    res.json({ message: 'Statut de la tâche mis à jour avec succès' });
+    res.json(results[0]); // Renvoie les données du profil
   });
 });
 
